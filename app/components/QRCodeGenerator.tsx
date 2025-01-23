@@ -1,12 +1,14 @@
 'use client';
 import { useState } from 'react';
 import QRCode from 'qrcode';
-import Image from 'next/image';
+// import Image from 'next/image';
 
 export default function QRCodeGenerator() {
+  const MAX_TEXT_LENGTH = 200;
+  const MIN_QR_SIZE = 100;
+  const MAX_QR_SIZE = 500;
   const [text, setText] = useState('');
   const [qrCode, setQRCode] = useState('');
-
   const [color, setColor] = useState('#000000');
   const [size, setSize] = useState(200);
 
@@ -15,6 +17,21 @@ export default function QRCodeGenerator() {
       alert('Please enter a valid text or URL.');
       return;
     }
+
+    if (text.length > MAX_TEXT_LENGTH) {
+      alert(
+        `Text is too long! Maximum allowed: ${MAX_TEXT_LENGTH} characters.`
+      );
+      return;
+    }
+
+    if (size < MIN_QR_SIZE || size > MAX_QR_SIZE) {
+      alert(
+        `QR Code size must be between ${MIN_QR_SIZE}px and ${MAX_QR_SIZE}px.`
+      );
+      return;
+    }
+
     try {
       const url = await QRCode.toDataURL(text, {
         color: { dark: color, light: '#ffffff' },
@@ -54,8 +71,8 @@ export default function QRCodeGenerator() {
             type='number'
             value={size}
             onChange={(e) => setSize(Number(e.target.value))}
-            min='100'
-            max='500'
+            min={MIN_QR_SIZE}
+            max={MAX_QR_SIZE}
             className='ml-2 w-20 p-1 border'
           />
         </label>
@@ -64,7 +81,8 @@ export default function QRCodeGenerator() {
         type='text'
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder='Enter text or URL'
+        maxLength={MAX_TEXT_LENGTH}
+        placeholder={`Enter text (max ${MAX_TEXT_LENGTH} chars)`}
         className='border p-2 rounded w-full'
       />
       <button
@@ -75,12 +93,7 @@ export default function QRCodeGenerator() {
       </button>
       {qrCode && (
         <div className='mt-4 flex flex-col items-center'>
-          <img
-            src={qrCode}
-            alt='QR Code'
-            className='mb-2'
-            height={150}
-          />
+          <img src={qrCode} alt='QR Code' className='mb-2' height={150} />
           <button
             onClick={downloadQRCode}
             className='bg-green-500 text-white p-2 rounded'
