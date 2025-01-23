@@ -8,9 +8,16 @@ export default function QRCodeGenerator() {
   const [qrCode, setQRCode] = useState('');
 
   const generateQRCode = async () => {
-    if (text) {
+    if (!text.trim()) {
+      alert('Please enter a valid text or URL.');
+      return;
+    }
+    try {
       const url = await QRCode.toDataURL(text);
       setQRCode(url);
+    } catch (error) {
+      console.error('QR Code Generation Error:', error);
+      alert('Failed to generate QR Code. Please try again.');
     }
   };
 
