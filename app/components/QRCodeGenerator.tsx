@@ -4,13 +4,14 @@ import QRCode from 'qrcode';
 // import Image from 'next/image';
 
 export default function QRCodeGenerator() {
-  const MAX_TEXT_LENGTH = 200;
-  const MIN_QR_SIZE = 100;
-  const MAX_QR_SIZE = 500;
   const [text, setText] = useState('');
   const [qrCode, setQRCode] = useState('');
   const [color, setColor] = useState('#000000');
   const [size, setSize] = useState(200);
+
+  const MAX_TEXT_LENGTH = 200;
+  const MIN_QR_SIZE = 100;
+  const MAX_QR_SIZE = 500;
 
   const generateQRCode = async () => {
     if (!text.trim()) {
@@ -54,54 +55,62 @@ export default function QRCodeGenerator() {
   };
 
   return (
-    <div className='p-4 flex flex-col items-center'>
-      <div className='mt-2 flex gap-2'>
-        <label>
-          Color:
-          <input
-            type='color'
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className='ml-2'
-          />
-        </label>
-        <label>
-          Size:
-          <input
-            type='number'
-            value={size}
-            onChange={(e) => setSize(Number(e.target.value))}
-            min={MIN_QR_SIZE}
-            max={MAX_QR_SIZE}
-            className='ml-2 w-20 p-1 border'
-          />
-        </label>
-      </div>
-      <input
-        type='text'
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        maxLength={MAX_TEXT_LENGTH}
-        placeholder={`Enter text (max ${MAX_TEXT_LENGTH} chars)`}
-        className='border p-2 rounded w-full'
-      />
-      <button
-        onClick={generateQRCode}
-        className='mt-2 bg-blue-500 text-white p-2 rounded'
-      >
-        Generate QR Code
-      </button>
-      {qrCode && (
-        <div className='mt-4 flex flex-col items-center'>
-          <img src={qrCode} alt='QR Code' className='mb-2' height={150} />
-          <button
-            onClick={downloadQRCode}
-            className='bg-green-500 text-white p-2 rounded'
-          >
-            Download QR Code
-          </button>
+    <div className='flex flex-col items-center bg-gray-100 min-h-screen p-6'>
+      <div className='bg-white shadow-lg rounded-lg p-6 w-96'>
+        <h1 className='text-2xl font-bold text-center mb-4'>
+          QR Code Generator
+        </h1>
+
+        <input
+          type='text'
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          maxLength={MAX_TEXT_LENGTH}
+          placeholder={`Enter text (max ${MAX_TEXT_LENGTH} chars)`}
+          className='w-full border rounded-md px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500'
+        />
+
+        <div className='flex justify-between items-center mb-3'>
+          <label className='flex items-center gap-2'>
+            <span>Color:</span>
+            <input
+              type='color'
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+            />
+          </label>
+          <label className='flex items-center gap-2'>
+            <span>Size:</span>
+            <input
+              type='number'
+              value={size}
+              onChange={(e) => setSize(Number(e.target.value))}
+              min={MIN_QR_SIZE}
+              max={MAX_QR_SIZE}
+              className='w-16 border p-1 rounded'
+            />
+          </label>
         </div>
-      )}
+
+        <button
+          onClick={generateQRCode}
+          className='w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition'
+        >
+          Generate QR Code
+        </button>
+
+        {qrCode && (
+          <div className='mt-4 flex flex-col items-center'>
+            <img src={qrCode} alt='QR Code' className='w-48 h-48' />
+            <button
+              onClick={downloadQRCode}
+              className='mt-3 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition'
+            >
+              Download QR Code
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
