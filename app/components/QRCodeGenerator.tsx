@@ -7,13 +7,19 @@ export default function QRCodeGenerator() {
   const [text, setText] = useState('');
   const [qrCode, setQRCode] = useState('');
 
+  const [color, setColor] = useState('#000000');
+  const [size, setSize] = useState(200);
+
   const generateQRCode = async () => {
     if (!text.trim()) {
       alert('Please enter a valid text or URL.');
       return;
     }
     try {
-      const url = await QRCode.toDataURL(text);
+      const url = await QRCode.toDataURL(text, {
+        color: { dark: color, light: '#ffffff' },
+        width: size,
+      });
       setQRCode(url);
     } catch (error) {
       console.error('QR Code Generation Error:', error);
@@ -32,6 +38,28 @@ export default function QRCodeGenerator() {
 
   return (
     <div className='p-4 flex flex-col items-center'>
+      <div className='mt-2 flex gap-2'>
+        <label>
+          Color:
+          <input
+            type='color'
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            className='ml-2'
+          />
+        </label>
+        <label>
+          Size:
+          <input
+            type='number'
+            value={size}
+            onChange={(e) => setSize(Number(e.target.value))}
+            min='100'
+            max='500'
+            className='ml-2 w-20 p-1 border'
+          />
+        </label>
+      </div>
       <input
         type='text'
         value={text}
@@ -47,11 +75,10 @@ export default function QRCodeGenerator() {
       </button>
       {qrCode && (
         <div className='mt-4 flex flex-col items-center'>
-          <Image
+          <img
             src={qrCode}
             alt='QR Code'
             className='mb-2'
-            width={150}
             height={150}
           />
           <button
