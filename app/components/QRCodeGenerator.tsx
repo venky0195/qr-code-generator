@@ -1,22 +1,17 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import QRCode from 'qrcode';
-// import Image from 'next/image';
+import ThemeToggler from './ThemeToggler';
 
 export default function QRCodeGenerator() {
   const [text, setText] = useState('');
   const [qrCode, setQRCode] = useState('');
   const [color, setColor] = useState('#000000');
   const [size, setSize] = useState(200);
-  const [darkMode, setDarkMode] = useState(false);
 
   const MAX_TEXT_LENGTH = 200;
   const MIN_QR_SIZE = 100;
   const MAX_QR_SIZE = 500;
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-  }, [darkMode]);
 
   const generateQRCode = async () => {
     if (!text.trim()) {
@@ -61,20 +56,13 @@ export default function QRCodeGenerator() {
 
   return (
     <div
-      className={`flex flex-col items-center min-h-screen p-6 ${
-        darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'
-      }`}
+      className={
+        'flex flex-col items-center min-h-screen p-6 dark:bg-gray-900 text-white bg-gray-100 text-black'
+      }
     >
       <div className='w-96 bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6'>
-        {/* Dark Mode Toggle */}
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className='mb-4 p-2 text-sm rounded-md bg-gray-300 dark:bg-gray-700 dark:text-white'
-        >
-          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-        </button>
-
-        <h1 className='text-2xl font-bold text-center mb-4'>
+        <ThemeToggler />
+        <h1 className='text-2xl font-bold text-center mb-4 text-gray-800 dark:text-white'>
           QR Code Generator
         </h1>
 
@@ -84,7 +72,7 @@ export default function QRCodeGenerator() {
           onChange={(e) => setText(e.target.value)}
           maxLength={MAX_TEXT_LENGTH}
           placeholder={`Enter text (max ${MAX_TEXT_LENGTH} chars)`}
-          className='w-full border rounded-md px-3 py-2 mb-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
+          className='w-full border rounded-md px-3 py-2 mb-3 text-gray-800 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
         />
 
         <div className='flex justify-between items-center mb-3'>
@@ -104,7 +92,7 @@ export default function QRCodeGenerator() {
               onChange={(e) => setSize(Number(e.target.value))}
               min={MIN_QR_SIZE}
               max={MAX_QR_SIZE}
-              className='w-16 border p-1 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white'
+              className='w-16 border p-1 rounded text-gray-800 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
             />
           </label>
         </div>
