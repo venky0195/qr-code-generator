@@ -75,7 +75,7 @@ export default function QRCodeGenerator() {
           className='w-full border rounded-md px-3 py-2 mb-3 text-gray-800 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
         />
 
-        <div className='flex justify-between items-center mb-3'>
+        <div className='flex justify-between items-center mb-3 dark:text-white text-gray-800'>
           <label className='flex items-center gap-2'>
             <span>Color:</span>
             <input
@@ -88,7 +88,7 @@ export default function QRCodeGenerator() {
             <span>Size:</span>
             <input
               type='number'
-              value={size}
+              value={size === 0 ? '' : size} // Show empty string when cleared
               onChange={(e) => setSize(Number(e.target.value))}
               min={MIN_QR_SIZE}
               max={MAX_QR_SIZE}
