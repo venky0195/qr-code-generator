@@ -7,11 +7,9 @@ export default function QRCodeGenerator() {
   const [text, setText] = useState('');
   const [qrCode, setQRCode] = useState('');
   const [color, setColor] = useState('#000000');
-  const [size, setSize] = useState(200);
 
   const MAX_TEXT_LENGTH = 200;
-  const MIN_QR_SIZE = 100;
-  const MAX_QR_SIZE = 500;
+  const QR_CODE_SIZE = 200;
 
   const generateQRCode = async () => {
     if (!text.trim()) {
@@ -26,17 +24,10 @@ export default function QRCodeGenerator() {
       return;
     }
 
-    if (size < MIN_QR_SIZE || size > MAX_QR_SIZE) {
-      alert(
-        `QR Code size must be between ${MIN_QR_SIZE}px and ${MAX_QR_SIZE}px.`
-      );
-      return;
-    }
-
     try {
       const url = await QRCode.toDataURL(text, {
         color: { dark: color, light: '#ffffff' },
-        width: size,
+        width: QR_CODE_SIZE,
       });
       setQRCode(url);
     } catch (error) {
@@ -55,12 +46,8 @@ export default function QRCodeGenerator() {
   };
 
   return (
-    <div
-      className={
-        'flex flex-col items-center min-h-screen p-6 dark:bg-gray-900 text-white bg-gray-100 text-black'
-      }
-    >
-      <div className='w-96 bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6'>
+    <div className='flex flex-col items-center min-h-screen p-6 dark:bg-gray-900 bg-gray-100'>
+      <div className='w-full max-w-md bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6'>
         <ThemeToggler />
         <h1 className='text-2xl font-bold text-center mb-4 text-gray-800 dark:text-white'>
           QR Code Generator
@@ -84,17 +71,6 @@ export default function QRCodeGenerator() {
               onChange={(e) => setColor(e.target.value)}
             />
           </label>
-          <label className='flex items-center gap-2'>
-            <span>Size:</span>
-            <input
-              type='number'
-              value={size === 0 ? '' : size} // Show empty string when cleared
-              onChange={(e) => setSize(Number(e.target.value))}
-              min={MIN_QR_SIZE}
-              max={MAX_QR_SIZE}
-              className='w-16 border p-1 rounded text-gray-800 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
-            />
-          </label>
         </div>
 
         <button
@@ -106,7 +82,15 @@ export default function QRCodeGenerator() {
 
         {qrCode && (
           <div className='mt-4 flex flex-col items-center'>
-            <img src={qrCode} alt='QR Code' className='w-48 h-48' />
+            <img
+              src={qrCode}
+              alt='QR Code'
+              className='max-w-full'
+              style={{
+                width: `${QR_CODE_SIZE}px`,
+                height: `${QR_CODE_SIZE}px`,
+              }}
+            />
             <button
               onClick={downloadQRCode}
               className='mt-3 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition'
