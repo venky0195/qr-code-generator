@@ -14,8 +14,17 @@ export default function QRCodeGenerator() {
     }
   };
 
+  const downloadQRCode = () => {
+    if (qrCode) {
+      const link = document.createElement('a');
+      link.href = qrCode;
+      link.download = 'qrcode.png';
+      link.click();
+    }
+  };
+
   return (
-    <div className='p-4'>
+    <div className='p-4 flex flex-col items-center'>
       <input
         type='text'
         value={text}
@@ -30,13 +39,21 @@ export default function QRCodeGenerator() {
         Generate QR Code
       </button>
       {qrCode && (
-        <Image
-          src={qrCode}
-          alt='QR Code'
-          className='mt-4'
-          width={150}
-          height={150}
-        />
+        <div className='mt-4 flex flex-col items-center'>
+          <Image
+            src={qrCode}
+            alt='QR Code'
+            className='mb-2'
+            width={150}
+            height={150}
+          />
+          <button
+            onClick={downloadQRCode}
+            className='bg-green-500 text-white p-2 rounded'
+          >
+            Download QR Code
+          </button>
+        </div>
       )}
     </div>
   );
