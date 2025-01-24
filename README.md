@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QR Code Generator
 
-## Getting Started
+This is a web-based QR Code Generator built with React and Tailwind CSS. The app allows users to create custom QR codes by entering text or a URL, customize the QR code's colors, and save the generated QR codes to a history for later access.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **QR Code Generation**: Enter any text or URL, and the app generates a QR code.
+- **Customizable Colors**: Choose QR code and background colors using color pickers.
+- **Scan to Test**: If the generated QR code links to a URL, the "Scan to Test" button opens it in a new tab.
+- **QR Code History**: View a history of generated QR codes, including the text, timestamp, and download option.
+- **Theme Toggle**: Switch between light and dark modes with a theme toggler.
+- **Copy to Clipboard**: Copy QR code to clipboard for easy sharing.
+- **Download QR Code**: Download the generated QR code as a PNG file.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Demo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can try out the live demo of the QR Code Generator here: [qr-code-generator-for-url.vercel.app](http://qr-code-generator-for-url.vercel.app)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technologies Used
 
-## Learn More
+- Next.js: React-based framework for building server-side rendered applications.
+- React: JavaScript library for building user interfaces.
+- Tailwind CSS: Utility-first CSS framework for styling.
+- QRCode.js: Library for generating QR codes.
+- LocalStorage: For saving QR code history.
 
-To learn more about Next.js, take a look at the following resources:
+## Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/venky0195/qr-code-generator
+   ```
+2. Navigate to the project folder:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   cd qr-code-generator
+   ```
 
-## Deploy on Vercel
+3. Install dependencies:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open the app in your browser at [http://localhost:3000](http://localhost:3000).
+
+## How to Use
+
+1. Enter the text or URL in the input field.
+2. The QR code is generated instantly. You can:
+   - Click on the "Scan to Test" button if the QR code points to a URL. It will open the URL in a new tab.
+   - Copy the QR code to the clipboard by clicking the "Copy" button.
+   - Download the QR code as a PNG file using the "Download" button.
+3. Choose custom colors for the QR code and background using the color pickers.
+4. The generated QR codes are saved in the history section, which you can view, remove, or download.
+5. Toggle between light and dark themes using the theme switcher.
+
+## Contributing
+
+If you'd like to contribute to this project, feel free to fork the repository and submit a pull request. You can also open issues to report bugs or request new features.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
