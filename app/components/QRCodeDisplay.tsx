@@ -22,10 +22,19 @@ const QRCodeDisplay = ({
         alt='QR Code'
         className='max-w-[300px] rounded-md border border-gray-300 dark:border-gray-600 p-3'
       />
+      {/^https?:\/\//.test(text) && (
+        <button
+          onClick={() => window.open(text, '_blank')}
+          className='w-full mt-3 bg-purple-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-purple-700 transition-all'
+        >
+          🔍 Scan to Test
+        </button>
+      )}
+
       {showTextAndTimestamp && (
         <>
           <p
-            className='text-sm text-gray-700 dark:text-gray-300 overflow-hidden text-ellipsis whitespace-nowrap mt-3'
+            className='text-sm text-gray-700 dark:text-gray-300 mt-3 overflow-hidden text-ellipsis whitespace-nowrap max-w-[100%]'
             title={text}
           >
             <strong>Text:</strong> {text}

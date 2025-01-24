@@ -233,12 +233,12 @@ export default function QRCodeGenerator() {
                     onClick={() => openModal(item)}
                   />
 
-                  <button
+                  <a
                     onClick={() => removeFromHistory(index)}
                     className='mt-2 text-red-500 text-sm'
                   >
                     Remove
-                  </button>
+                  </a>
                 </div>
               ))}
             </div>
