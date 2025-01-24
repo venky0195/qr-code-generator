@@ -305,24 +305,26 @@ export default function QRCodeGenerator() {
             <h2 className='text-lg font-semibold text-center text-gray-900 dark:text-gray-200'>
               QR Code Preview
             </h2>
-            <img
-              src={modalData.qrCode}
-              alt='QR Code'
-              className='w-full max-w-[300px] rounded-md border border-gray-300 dark:border-gray-600 p-3 mt-3'
-            />
+            <div className='flex justify-center mt-3'>
+              <img
+                src={modalData.qrCode}
+                alt='QR Code'
+                className='max-w-[300px] rounded-md border border-gray-300 dark:border-gray-600 p-3'
+              />
+            </div>
             <div className='mt-3'>
               <button
-                onClick={() => copyQRCode(qrCode)}
+                onClick={() => copyQRCode(modalData.qrCode)}
                 className='w-full bg-blue-600 dark:bg-blue-500 text-white py-2 px-4 rounded-md shadow-md 
-                           hover:bg-blue-700 dark:hover:bg-blue-400 transition-all text-sm'
+                       hover:bg-blue-700 dark:hover:bg-blue-400 transition-all text-sm'
               >
                 📋 Copy
               </button>
 
               <button
-                onClick={() => downloadQRCode(qrCode)}
+                onClick={() => downloadQRCode(modalData.qrCode)}
                 className='w-full mt-2 bg-green-600 dark:bg-green-500 text-white py-2 px-4 rounded-md shadow-md 
-                           hover:bg-green-700 dark:hover:bg-green-400 transition-all text-sm'
+                       hover:bg-green-700 dark:hover:bg-green-400 transition-all text-sm'
               >
                 💾 Download
               </button>
