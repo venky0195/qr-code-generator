@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import ThemeToggler from './ThemeToggler';
 
@@ -8,33 +8,42 @@ export default function QRCodeGenerator() {
   const [qrCode, setQRCode] = useState('');
   const [color, setColor] = useState('#000000');
   const [bgColor, setBgColor] = useState('#ffffff');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const MAX_TEXT_LENGTH = 200;
   const QR_CODE_SIZE = 200;
 
-  const generateQRCode = async () => {
+  useEffect(() => {
     if (!text.trim()) {
-      alert('Please enter a valid text or URL.');
+      setQRCode('');
       return;
     }
 
-    if (text.length > MAX_TEXT_LENGTH) {
-      alert(
-        `Text is too long! Maximum allowed: ${MAX_TEXT_LENGTH} characters.`
-      );
+    const timeout = setTimeout(async () => {
+      try {
+        const url = await QRCode.toDataURL(text, {
+          color: { dark: color, light: bgColor },
+          width: 200,
+        });
+        setQRCode(url);
+      } catch (error) {
+        console.error('QR Code Generation Error:', error);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [text, color, bgColor]);
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newText = e.target.value;
+
+    if (newText.length > MAX_TEXT_LENGTH) {
+      setErrorMessage(`⚠️ Max ${MAX_TEXT_LENGTH} characters allowed.`);
       return;
     }
 
-    try {
-      const url = await QRCode.toDataURL(text, {
-        color: { dark: color, light: bgColor },
-        width: QR_CODE_SIZE,
-      });
-      setQRCode(url);
-    } catch (error) {
-      console.error('QR Code Generation Error:', error);
-      alert('Failed to generate QR Code. Please try again.');
-    }
+    setErrorMessage('');
+    setText(newText);
   };
 
   const downloadQRCode = () => {
@@ -57,11 +66,15 @@ export default function QRCodeGenerator() {
         <input
           type='text'
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={handleTextChange}
           maxLength={MAX_TEXT_LENGTH}
           placeholder='Enter text or URL'
-          className='w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 mb-3 text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700'
+          className='w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 mb-2 text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700'
         />
+
+        {errorMessage && (
+          <p className='text-red-500 text-sm mt-1 mb-4'>{errorMessage}</p>
+        )}
 
         <div className='flex flex-col sm:flex-row justify-between items-center gap-3 mb-4'>
           <label className='flex flex-col w-full'>
@@ -89,12 +102,12 @@ export default function QRCodeGenerator() {
         </div>
 
         <div className='flex gap-3'>
-          <button
+          {/* <button
             onClick={generateQRCode}
             className='w-full bg-cyan-600 text-white py-3 rounded-md shadow-md hover:bg-cyan-700 transition-all'
           >
             🎯 Generate QR Code
-          </button>
+          </button> */}
           {qrCode && (
             <button
               onClick={() => {
