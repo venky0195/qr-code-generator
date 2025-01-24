@@ -146,7 +146,17 @@ export default function QRCodeGenerator() {
                   height: `${QR_CODE_SIZE}px`,
                 }}
               />
-              <div className='flex flex-col sm:flex-row gap-3 w-full mt-3 '>
+
+              {/^https?:\/\//.test(text) && (
+                <button
+                  onClick={() => window.open(text, '_blank')}
+                  className='w-full mt-3 bg-purple-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-purple-700 transition-all'
+                >
+                  🔍 Scan to Test
+                </button>
+              )}
+
+              <div className='flex flex-col sm:flex-row gap-3 w-full mt-3'>
                 <button
                   onClick={copyQRCode}
                   className='w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition-all'
