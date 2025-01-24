@@ -13,6 +13,13 @@ export default function QRCodeGenerator() {
   const [history, setHistory] = useState<
     { text: string; color: string; bgColor: string; qrCode: string }[]
   >([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalData, setModalData] = useState<{
+    text: string;
+    color: string;
+    bgColor: string;
+    qrCode: string;
+  } | null>(null);
 
   const MAX_TEXT_LENGTH = 200;
   const QR_CODE_SIZE = 180;
@@ -50,20 +57,16 @@ export default function QRCodeGenerator() {
     setText(newText);
   };
 
-  const downloadQRCode = () => {
-    if (qrCode) {
-      const link = document.createElement('a');
-      link.href = qrCode;
-      link.download = 'qrcode.png';
-      link.click();
-    }
+  const downloadQRCode = (qrCodeUrl: string) => {
+    const link = document.createElement('a');
+    link.href = qrCodeUrl;
+    link.download = 'qrcode.png';
+    link.click();
   };
 
-  const copyQRCode = async () => {
-    if (!qrCode) return;
-
+  const copyQRCode = async (qrCodeUrl: string) => {
     try {
-      const response = await fetch(qrCode);
+      const response = await fetch(qrCodeUrl);
       const blob = await response.blob();
       const clipboardItem = new ClipboardItem({ 'image/png': blob });
 
@@ -98,7 +101,6 @@ export default function QRCodeGenerator() {
         });
         setQRCode(url);
 
-        // Save to history using a function to update state
         setHistory((prevHistory) => {
           const newHistory = [
             ...prevHistory,
@@ -113,7 +115,7 @@ export default function QRCodeGenerator() {
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [text, color, bgColor]); // Don't include `history` here
+  }, [text, color, bgColor]);
 
   const removeFromHistory = (index: number) => {
     const newHistory = history.filter((_, i) => i !== index);
@@ -124,6 +126,21 @@ export default function QRCodeGenerator() {
   const clearHistory = () => {
     setHistory([]);
     localStorage.removeItem('qrHistory');
+  };
+
+  const openModal = (item: {
+    text: string;
+    color: string;
+    bgColor: string;
+    qrCode: string;
+  }) => {
+    setModalData(item);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setModalData(null);
   };
 
   return (
@@ -214,7 +231,7 @@ export default function QRCodeGenerator() {
 
               <div className='flex flex-col sm:flex-row gap-2 w-full mt-2'>
                 <button
-                  onClick={copyQRCode}
+                  onClick={() => copyQRCode(qrCode)}
                   className='w-full bg-blue-600 dark:bg-blue-500 text-white py-2 px-4 rounded-md shadow-md 
                              hover:bg-blue-700 dark:hover:bg-blue-400 transition-all text-sm'
                 >
@@ -222,7 +239,7 @@ export default function QRCodeGenerator() {
                 </button>
 
                 <button
-                  onClick={downloadQRCode}
+                  onClick={() => downloadQRCode(qrCode)}
                   className='w-full bg-green-600 dark:bg-green-500 text-white py-2 px-4 rounded-md shadow-md 
                              hover:bg-green-700 dark:hover:bg-green-400 transition-all text-sm'
                 >
@@ -255,17 +272,7 @@ export default function QRCodeGenerator() {
                     src={item.qrCode}
                     alt={`QR Code ${index + 1}`}
                     className='w-20 h-20 rounded-md border border-gray-300 dark:border-gray-600 p-1'
-                    onClick={() => {
-                      const alreadyInHistory = history.some(
-                        (historyItem) => historyItem.qrCode === item.qrCode
-                      );
-
-                      if (!alreadyInHistory) {
-                        setText(item.text);
-                        setColor(item.color);
-                        setBgColor(item.bgColor);
-                      }
-                    }}
+                    onClick={() => openModal(item)} // Open modal on click
                   />
 
                   <button
@@ -286,6 +293,52 @@ export default function QRCodeGenerator() {
           </div>
         )}
       </div>
+      {modalVisible && modalData && (
+        <div
+          className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'
+          onClick={closeModal}
+        >
+          <div
+            className='bg-white dark:bg-gray-800 p-5 rounded-md shadow-lg relative max-w-sm w-full'
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className='text-lg font-semibold text-center text-gray-900 dark:text-gray-200'>
+              QR Code Preview
+            </h2>
+            <img
+              src={modalData.qrCode}
+              alt='QR Code'
+              className='w-full max-w-[300px] rounded-md border border-gray-300 dark:border-gray-600 p-3 mt-3'
+            />
+            <div className='mt-3'>
+              <button
+                onClick={() => copyQRCode(qrCode)}
+                className='w-full bg-blue-600 dark:bg-blue-500 text-white py-2 px-4 rounded-md shadow-md 
+                           hover:bg-blue-700 dark:hover:bg-blue-400 transition-all text-sm'
+              >
+                📋 Copy
+              </button>
+
+              <button
+                onClick={() => downloadQRCode(qrCode)}
+                className='w-full mt-2 bg-green-600 dark:bg-green-500 text-white py-2 px-4 rounded-md shadow-md 
+                           hover:bg-green-700 dark:hover:bg-green-400 transition-all text-sm'
+              >
+                💾 Download
+              </button>
+              {copySuccess && (
+                <p className='text-green-500 text-xs mt-2'>{copySuccess}</p>
+              )}
+            </div>
+            <button
+              onClick={closeModal}
+              className='absolute top-2 right-2 text-gray-600 dark:text-gray-200'
+            >
+              ❌
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
