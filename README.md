@@ -9,7 +9,6 @@ This is a web-based QR Code Generator built with React and Tailwind CSS. The app
 - **Scan to Test**: If the generated QR code links to a URL, the "Scan to Test" button opens it in a new tab.
 - **QR Code History**: View a history of generated QR codes, including the text, timestamp, and download option.
 - **Theme Toggle**: Switch between light and dark modes with a theme toggler.
-- **Copy to Clipboard**: Copy QR code to clipboard for easy sharing.
 - **Download QR Code**: Download the generated QR code as a PNG file.
 
 ## Demo
@@ -55,7 +54,6 @@ You can try out the live demo of the QR Code Generator here: [qr-code-generator-
 1. Enter the text or URL in the input field.
 2. The QR code is generated instantly. You can:
    - Click on the "Scan to Test" button if the QR code points to a URL. It will open the URL in a new tab.
-   - Copy the QR code to the clipboard by clicking the "Copy" button.
    - Download the QR code as a PNG file using the "Download" button.
 3. Choose custom colors for the QR code and background using the color pickers.
 4. The generated QR codes are saved in the history section, which you can view, remove, or download.

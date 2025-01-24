@@ -16,7 +16,6 @@ export default function QRCodeGenerator() {
   const [color, setColor] = useState('#000000');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [errorMessage, setErrorMessage] = useState('');
-  const [copySuccess, setCopySuccess] = useState('');
   const [history, setHistory] = useState<QRCodeProps[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState<QRCodeProps | null>(null);
@@ -59,22 +58,6 @@ export default function QRCodeGenerator() {
     link.href = qrCodeUrl;
     link.download = 'qrcode.png';
     link.click();
-  };
-
-  const copyQRCode = async (qrCodeUrl: string) => {
-    try {
-      const response = await fetch(qrCodeUrl);
-      const blob = await response.blob();
-      const clipboardItem = new ClipboardItem({ 'image/png': blob });
-
-      await navigator.clipboard.write([clipboardItem]);
-      setCopySuccess('✅ Copied!');
-
-      setTimeout(() => setCopySuccess(''), 1000);
-    } catch (error) {
-      console.error('Copy to Clipboard Error:', error);
-      setCopySuccess('❌ Failed to Copy');
-    }
   };
 
   useEffect(() => {
@@ -141,10 +124,6 @@ export default function QRCodeGenerator() {
     setModalData(null);
   };
 
-  const handleCopyQRCode = (qrCodeUrl: string) => {
-    copyQRCode(qrCodeUrl);
-  };
-
   const handleDownloadQRCode = (qrCodeUrl: string) => {
     downloadQRCode(qrCodeUrl);
   };
@@ -202,12 +181,8 @@ export default function QRCodeGenerator() {
               qrCode={qrCode}
               text={text}
               timestamp={formatTimestamp(new Date().toISOString())}
-              onCopy={() => handleCopyQRCode(qrCode)}
               onDownload={() => handleDownloadQRCode(qrCode)}
             />
-            {!modalVisible && copySuccess && (
-              <p className='text-green-500 text-xs mt-2'>{copySuccess}</p>
-            )}
           </>
         )}
         {history.length > 0 && (
@@ -267,13 +242,9 @@ export default function QRCodeGenerator() {
               qrCode={modalData.qrCode}
               text={modalData.text}
               timestamp={modalData.timestamp}
-              onCopy={() => handleCopyQRCode(modalData.qrCode)}
               onDownload={() => handleDownloadQRCode(modalData.qrCode)}
               showTextAndTimestamp={true}
             />
-            {copySuccess && (
-              <p className='text-green-500 text-xs mt-2'>{copySuccess}</p>
-            )}
             <button
               onClick={closeModal}
               className='absolute top-2 right-2 text-gray-600 dark:text-gray-200'
