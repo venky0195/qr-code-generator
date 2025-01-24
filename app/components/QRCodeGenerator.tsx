@@ -11,7 +11,13 @@ export default function QRCodeGenerator() {
   const [errorMessage, setErrorMessage] = useState('');
   const [copySuccess, setCopySuccess] = useState('');
   const [history, setHistory] = useState<
-    { text: string; color: string; bgColor: string; qrCode: string }[]
+    {
+      text: string;
+      color: string;
+      bgColor: string;
+      qrCode: string;
+      timestamp: string;
+    }[]
   >([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState<{
@@ -19,10 +25,26 @@ export default function QRCodeGenerator() {
     color: string;
     bgColor: string;
     qrCode: string;
+    timestamp: string;
   } | null>(null);
 
   const MAX_TEXT_LENGTH = 200;
   const QR_CODE_SIZE = 180;
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true,
+    };
+
+    return date.toLocaleString('en-US', options);
+  };
 
   useEffect(() => {
     if (!text.trim()) {
@@ -104,7 +126,13 @@ export default function QRCodeGenerator() {
         setHistory((prevHistory) => {
           const newHistory = [
             ...prevHistory,
-            { text, color, bgColor, qrCode: url },
+            {
+              text,
+              color,
+              bgColor,
+              qrCode: url,
+              timestamp: formatTimestamp(new Date().toISOString()),
+            },
           ];
           localStorage.setItem('qrHistory', JSON.stringify(newHistory));
           return newHistory;
@@ -133,6 +161,7 @@ export default function QRCodeGenerator() {
     color: string;
     bgColor: string;
     qrCode: string;
+    timestamp: string;
   }) => {
     setModalData(item);
     setModalVisible(true);
@@ -295,7 +324,7 @@ export default function QRCodeGenerator() {
       </div>
       {modalVisible && modalData && (
         <div
-          className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'
+          className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4'
           onClick={closeModal}
         >
           <div
@@ -312,6 +341,15 @@ export default function QRCodeGenerator() {
                 className='max-w-[300px] rounded-md border border-gray-300 dark:border-gray-600 p-3'
               />
             </div>
+            <p
+              className='text-sm text-gray-700 dark:text-gray-300 overflow-hidden text-ellipsis whitespace-nowrap mt-3'
+              title={modalData.text}
+            >
+              <strong>Text:</strong> {modalData.text}
+            </p>
+            <p className='text-xs text-gray-500 dark:text-gray-400'>
+              <strong>Added on:</strong> {modalData.timestamp}
+            </p>
             <div className='mt-3'>
               <button
                 onClick={() => copyQRCode(modalData.qrCode)}
