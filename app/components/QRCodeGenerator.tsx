@@ -10,9 +10,12 @@ export default function QRCodeGenerator() {
   const [bgColor, setBgColor] = useState('#ffffff');
   const [errorMessage, setErrorMessage] = useState('');
   const [copySuccess, setCopySuccess] = useState('');
+  const [history, setHistory] = useState<
+    { text: string; color: string; bgColor: string; qrCode: string }[]
+  >([]);
 
   const MAX_TEXT_LENGTH = 200;
-  const QR_CODE_SIZE = 180; // Reduced size for better mobile fit
+  const QR_CODE_SIZE = 180;
 
   useEffect(() => {
     if (!text.trim()) {
@@ -72,6 +75,55 @@ export default function QRCodeGenerator() {
       console.error('Copy to Clipboard Error:', error);
       setCopySuccess('❌ Failed to Copy');
     }
+  };
+
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('qrHistory');
+    if (savedHistory) {
+      setHistory(JSON.parse(savedHistory));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!text.trim()) {
+      setQRCode('');
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
+      try {
+        const url = await QRCode.toDataURL(text, {
+          color: { dark: color, light: bgColor },
+          width: QR_CODE_SIZE,
+        });
+        setQRCode(url);
+
+        // Save to history using a function to update state
+        setHistory((prevHistory) => {
+          const newHistory = [
+            ...prevHistory,
+            { text, color, bgColor, qrCode: url },
+          ];
+          localStorage.setItem('qrHistory', JSON.stringify(newHistory));
+          return newHistory;
+        });
+      } catch (error) {
+        console.error('QR Code Generation Error:', error);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [text, color, bgColor]); // Don't include `history` here
+
+  const removeFromHistory = (index: number) => {
+    const newHistory = history.filter((_, i) => i !== index);
+    setHistory(newHistory);
+    localStorage.setItem('qrHistory', JSON.stringify(newHistory));
+  };
+
+  const clearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem('qrHistory');
   };
 
   return (
@@ -182,6 +234,56 @@ export default function QRCodeGenerator() {
               )}
             </div>
           </>
+        )}
+        {history.length > 0 && (
+          <div className='mt-4'>
+            <h2 className='text-base font-semibold mb-2 text-gray-900 dark:text-gray-200'>
+              🏙️ QR Code History
+            </h2>
+            <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
+              {history.map((item, index) => (
+                <div key={index} className='flex flex-col items-center'>
+                  <div
+                    className='w-full max-w-[70px] text-sm text-gray-700 dark:text-gray-300 overflow-hidden text-ellipsis whitespace-nowrap'
+                    title={item.text}
+                  >
+                    {item.text}
+                  </div>
+
+                  <img
+                    title={item.text}
+                    src={item.qrCode}
+                    alt={`QR Code ${index + 1}`}
+                    className='w-20 h-20 rounded-md border border-gray-300 dark:border-gray-600 p-1'
+                    onClick={() => {
+                      const alreadyInHistory = history.some(
+                        (historyItem) => historyItem.qrCode === item.qrCode
+                      );
+
+                      if (!alreadyInHistory) {
+                        setText(item.text);
+                        setColor(item.color);
+                        setBgColor(item.bgColor);
+                      }
+                    }}
+                  />
+
+                  <button
+                    onClick={() => removeFromHistory(index)}
+                    className='mt-2 text-red-500 text-sm'
+                  >
+                    ❌ Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={clearHistory}
+              className='mt-3 w-full bg-red-600 text-white py-2 rounded-md shadow-md hover:bg-red-700 transition-all text-sm'
+            >
+              Clear History
+            </button>
+          </div>
         )}
       </div>
     </div>
