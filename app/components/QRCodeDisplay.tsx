@@ -35,7 +35,7 @@ const QRCodeDisplay = ({
           </p>
         </>
       )}
-      <div className='mt-3 flex flex-col sm:flex-row gap-2'>
+      <div className='mt-3 flex flex-col sm:flex-row gap-2 w-full'>
         <button
           onClick={onCopy}
           className='w-full bg-blue-600 dark:bg-blue-500 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 dark:hover:bg-blue-400 transition-all text-sm'

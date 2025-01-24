@@ -2,7 +2,12 @@
 import { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import ThemeToggler from './ThemeToggler';
-import { QRCodeProps } from './types';
+import {
+  formatTimestamp,
+  MAX_TEXT_LENGTH,
+  QR_CODE_SIZE,
+  QRCodeProps,
+} from './types';
 import QRCodeDisplay from './QRCodeDisplay';
 
 export default function QRCodeGenerator() {
@@ -15,24 +20,6 @@ export default function QRCodeGenerator() {
   const [history, setHistory] = useState<QRCodeProps[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState<QRCodeProps | null>(null);
-
-  const MAX_TEXT_LENGTH = 200;
-  const QR_CODE_SIZE = 180;
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: true,
-    };
-
-    return date.toLocaleString('en-US', options);
-  };
 
   useEffect(() => {
     if (!text.trim()) {
