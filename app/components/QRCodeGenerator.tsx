@@ -9,6 +9,7 @@ export default function QRCodeGenerator() {
   const [color, setColor] = useState('#000000');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [errorMessage, setErrorMessage] = useState('');
+  const [copySuccess, setCopySuccess] = useState('');
 
   const MAX_TEXT_LENGTH = 200;
   const QR_CODE_SIZE = 200;
@@ -52,6 +53,24 @@ export default function QRCodeGenerator() {
       link.href = qrCode;
       link.download = 'qrcode.png';
       link.click();
+    }
+  };
+
+  const copyQRCode = async () => {
+    if (!qrCode) return;
+
+    try {
+      const response = await fetch(qrCode);
+      const blob = await response.blob();
+      const clipboardItem = new ClipboardItem({ 'image/png': blob });
+
+      await navigator.clipboard.write([clipboardItem]);
+      setCopySuccess('✅ Copied!');
+
+      setTimeout(() => setCopySuccess(''), 2000);
+    } catch (error) {
+      console.error('Copy to Clipboard Error:', error);
+      setCopySuccess('❌ Failed to Copy');
     }
   };
 
@@ -101,14 +120,8 @@ export default function QRCodeGenerator() {
           </label>
         </div>
 
-        <div className='flex gap-3'>
-          {/* <button
-            onClick={generateQRCode}
-            className='w-full bg-cyan-600 text-white py-3 rounded-md shadow-md hover:bg-cyan-700 transition-all'
-          >
-            🎯 Generate QR Code
-          </button> */}
-          {qrCode && (
+        {qrCode && (
+          <>
             <button
               onClick={() => {
                 setText('');
@@ -118,32 +131,41 @@ export default function QRCodeGenerator() {
             >
               ❌ Clear
             </button>
-          )}
-        </div>
-
-        {qrCode && (
-          <div
-            className={`mt-6 flex flex-col items-center p-4 border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700`}
-          >
-            <h2 className='text-lg font-semibold mb-2 text-gray-900 dark:text-white'>
-              🔍 Your QR Code
-            </h2>
-            <img
-              src={qrCode}
-              alt='QR Code'
-              className='rounded-md border p-2 bg-white'
-              style={{
-                width: `${QR_CODE_SIZE}px`,
-                height: `${QR_CODE_SIZE}px`,
-              }}
-            />
-            <button
-              onClick={downloadQRCode}
-              className='mt-3 bg-green-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-700 transition-all'
+            <div
+              className={`mt-6 flex flex-col items-center p-4 border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700`}
             >
-              💾 Download
-            </button>
-          </div>
+              <h2 className='text-lg font-semibold mb-2 text-gray-900 dark:text-white'>
+                🔍 Your QR Code
+              </h2>
+              <img
+                src={qrCode}
+                alt='QR Code'
+                className='rounded-md border p-2 bg-white'
+                style={{
+                  width: `${QR_CODE_SIZE}px`,
+                  height: `${QR_CODE_SIZE}px`,
+                }}
+              />
+              <div className='flex flex-col sm:flex-row gap-3 w-full mt-3 '>
+                <button
+                  onClick={copyQRCode}
+                  className='w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition-all'
+                >
+                  📋 Copy
+                </button>
+
+                <button
+                  onClick={downloadQRCode}
+                  className='w-full bg-green-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-700 transition-all'
+                >
+                  💾 Download
+                </button>
+              </div>
+              {copySuccess && (
+                <p className='text-green-500 text-sm mt-2'>{copySuccess}</p>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>
