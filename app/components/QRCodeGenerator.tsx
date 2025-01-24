@@ -275,7 +275,7 @@ export default function QRCodeGenerator() {
                   💾 Download
                 </button>
               </div>
-              {copySuccess && (
+              {!modalVisible && copySuccess && (
                 <p className='text-green-500 text-xs mt-2'>{copySuccess}</p>
               )}
             </div>
@@ -300,15 +300,15 @@ export default function QRCodeGenerator() {
                     title={item.text}
                     src={item.qrCode}
                     alt={`QR Code ${index + 1}`}
-                    className='w-20 h-20 rounded-md border border-gray-300 dark:border-gray-600 p-1'
-                    onClick={() => openModal(item)} // Open modal on click
+                    className='w-20 h-20 rounded-md border border-gray-300 dark:border-gray-600 cursor-pointer p-1'
+                    onClick={() => openModal(item)}
                   />
 
                   <button
                     onClick={() => removeFromHistory(index)}
                     className='mt-2 text-red-500 text-sm'
                   >
-                    ❌ Remove
+                    Remove
                   </button>
                 </div>
               ))}
